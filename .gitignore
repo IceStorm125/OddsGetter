@@ -1,0 +1,15 @@
+build/
+*.o
+*.a
+*.so
+*.exe
+*.out
+
+.vscode/
+
+mysql_*
+
+*.env
+CMakeUserPresets.json
+
+docker-compose.yml

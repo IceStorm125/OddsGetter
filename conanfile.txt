@@ -1,0 +1,14 @@
+[requires]
+boost/1.86.0
+nlohmann_json/3.11.3
+libcurl/8.5.0
+poco/1.13.3
+libmysqlclient/8.1.0
+spdlog/1.14.1
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
