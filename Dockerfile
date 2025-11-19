@@ -36,4 +36,4 @@ COPY wait-for-it.sh ./
 RUN cd build && cmake .. && make -j4
 
 # Замените 'your_executable' на имя вашего бинарного файла
-CMD ["./build/server"]
+CMD ["./build/OddsGetter"]
