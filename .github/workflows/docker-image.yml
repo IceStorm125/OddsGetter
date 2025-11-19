@@ -1,0 +1,27 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --target runtime --tag icestorm125/odds_getter:latest
+      
+    - name: Login to Docker Hub
+      run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u icestorm125 --password-stdin
+
+    - name: Push image
+      run: docker push icestorm125/odds_getter:latest
