@@ -196,7 +196,7 @@ std::optional<int> DatabaseManager::hasMatchesWithoutResult()
         // std::time_t now_t = std::chrono::system_clock::to_time_t(now);
         // std::time_t endTime_t = std::chrono::system_clock::to_time_t(endTime);
 
-        std::cout << diff.count() << std::endl;
+        // std::cout << diff.count() << std::endl;
         
         // std::cout << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S") << " " 
         //             << std::put_time(std::localtime(&endTime_t), "%Y-%m-%d %H:%M:%S") << std::endl;
