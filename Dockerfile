@@ -30,7 +30,7 @@ RUN conan install . --build=missing
 # Копируем оставшиеся файлы
 COPY CMakeLists.txt ./
 COPY src/ ./src/
-#COPY .env ./
+COPY wait-for-it.sh ./
 
 # Сборка проекта
 RUN cd build && cmake .. && make -j4
