@@ -1,29 +1,27 @@
-FROM debian:bookworm
+# ---------------------------------------------------------
+# 1) Build stage
+# ---------------------------------------------------------
+FROM debian:bookworm AS builder
 
-# Установка системных зависимостей, CMake и Conan
+# Установка build-зависимостей
 RUN apt-get update && apt-get install -y \
-    g++ \
-    cmake \
-    python3 \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel \
-    python3-venv \
-    python3-distutils \
-    ca-certificates \
-    curl \
-    git \
+    g++ cmake make \
+    python3 python3-pip python3-venv python3-setuptools python3-wheel \
+    git curl \
     build-essential \
-    && update-ca-certificates 
+    libssl-dev zlib1g-dev libcurl4-openssl-dev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --break-system-packages --upgrade pip setuptools wheel && pip3 install --break-system-packages conan
+# Установка Conan
+RUN pip3 install --break-system-packages --upgrade pip setuptools wheel
+RUN pip3 install --break-system-packages conan
 
 WORKDIR /app
 
-# Копируем только Conan-манифесты сначала — для кэширования зависимостей
+# Копируем только Conan-манифесты для кэширования
 COPY conanfile.* ./
 
-# Настройка и установка зависимостей Conan
 RUN conan profile detect --force
 RUN conan install . --build=missing
 
@@ -33,7 +31,21 @@ COPY src/ ./src/
 COPY wait-for-it.sh ./
 
 # Сборка проекта
-RUN cd build && cmake .. && make -j4
+RUN mkdir -p build && cd build && cmake .. && make -j4
 
-# Замените 'your_executable' на имя вашего бинарного файла
-CMD ["./build/OddsGetter"]
+# ---------------------------------------------------------
+# 2) Runtime stage (минимальный образ)
+# ---------------------------------------------------------
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y \
+    libssl3 zlib1g libcurl4 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Копируем собранный бинарник и скрипт wait-for-it.sh
+COPY --from=builder /app/build/OddsGetter .
+COPY --from=builder /app/wait-for-it.sh .
+
+CMD ["./OddsGetter"]
