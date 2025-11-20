@@ -4,7 +4,6 @@
 
 class JSONdataExtractor {
 public:
-    // Получить JSON по URL
     std::string getJson(const std::string& url) {
         CURL* curl = curl_easy_init();
         if (!curl) {

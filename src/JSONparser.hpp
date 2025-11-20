@@ -4,7 +4,6 @@
 #include <nlohmann/json.hpp>
 #include "JSONdataExtactor.hpp"
 #include "EnvManager.hpp"
-// Заглушка DatabaseManager (замени на реальную реализацию)
 
 class JSONparser
 {
