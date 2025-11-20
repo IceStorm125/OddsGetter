@@ -19,13 +19,13 @@
 int main() {
 
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs.txt", false);
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("OddsGetterLog.txt", false);
 
     std::vector<spdlog::sink_ptr> sinks {console_sink, file_sink};
     auto logger = std::make_shared<spdlog::logger>("main_logger", sinks.begin(), sinks.end());
 
-    spdlog::register_logger(logger); // Регистрация логгера
-    spdlog::set_default_logger(logger); // Можно поставить дефолтный логгер
+    spdlog::register_logger(logger); 
+    spdlog::set_default_logger(logger); 
 
     spdlog::info("Starting application...");
     spdlog::info("Loadding .env file...");
