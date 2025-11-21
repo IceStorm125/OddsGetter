@@ -19,7 +19,7 @@
 int main() {
 
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("OddsGetterLog.txt", false);
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("/app/OddsGetterLog.txt", false);
 
     std::vector<spdlog::sink_ptr> sinks {console_sink, file_sink};
     auto logger = std::make_shared<spdlog::logger>("main_logger", sinks.begin(), sinks.end());
