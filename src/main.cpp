@@ -26,6 +26,7 @@ int main() {
 
     spdlog::register_logger(logger); 
     spdlog::set_default_logger(logger); 
+    spdlog::flush_on(spdlog::level::info);
 
     spdlog::info("Starting application...");
     spdlog::info("Loadding .env file...");
