@@ -33,6 +33,7 @@ public:
     int getIdByTitle(std::string title);
     std::optional<int> hasMatchesWithoutResult();
     std::map<int, std::string> getInProgressTournaments();
+    std::unordered_set<std::string> getMatchesApiID();
 
 private:
     std::unique_ptr<Poco::Data::Session> session;
@@ -161,6 +162,30 @@ std::map<int, std::string> DatabaseManager::getInProgressTournaments()
     }
 
     return {};
+}
+
+std::unordered_set<std::string> DatabaseManager::getMatchesApiID()
+{
+    try
+    {
+        std::lock_guard<std::mutex> lock(sessionMutex);
+
+        Poco::Data::Statement select(*session);
+        select << "SELECT api_id FROM matches WHERE match_result_id IS NULL";
+        select.execute();
+        Poco::Data::RecordSet rs(select);
+
+        std::unordered_set<std::string> toReturn;
+        for (auto it = rs.begin(); it != rs.end(); ++it)
+            toReturn.insert((*it)[0].convert<std::string>());
+
+        return toReturn;
+    }
+    catch (const Poco::Exception &ex)
+    {
+        spdlog::error("Ошибка выборки данных: {}", ex.displayText());
+    }
+    return std::unordered_set<std::string>();
 }
 
 std::chrono::time_point<std::chrono::system_clock>

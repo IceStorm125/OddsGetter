@@ -34,11 +34,17 @@ public:
     {
         try
         {
+            std::unordered_set<std::string> matchIds = db->getMatchesApiID();
+
             nlohmann::json matches = nlohmann::json::parse(jsonString);
 
             for (const auto &match : matches)
             {
                 std::string api_id = match["id"];
+
+                if(matchIds.find(api_id) != matchIds.end())
+                    continue;
+
                 std::string sportTitle = match["sport_title"];
                 std::string homeTeam = match["home_team"];
                 std::string awayTeam = match["away_team"];
