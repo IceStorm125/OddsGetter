@@ -79,7 +79,7 @@ int main() {
             std::string json = extractor.getJson("https://api.the-odds-api.com/v4/sports/" + it.second + "/odds?regions=eu&markets=h2h&oddsFormat=decimal&apiKey=" + apiKey.value());
             parser.getMatchData(json);
         }
-        std::this_thread::sleep_for(std::chrono::minutes(360));
+        std::this_thread::sleep_for(std::chrono::minutes(60*24));
     }
     
 
