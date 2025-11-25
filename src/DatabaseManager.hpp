@@ -33,7 +33,8 @@ public:
     int getIdByTitle(std::string title);
     std::optional<int> hasMatchesWithoutResult();
     std::map<int, std::string> getInProgressTournaments();
-    std::unordered_set<std::string> getMatchesApiID();
+    std::unordered_set<std::string> getMatchesApiIDWithoutResult();
+    std::unordered_set<std::string> getMatchesApiIDWithResult();
 
 private:
     std::unique_ptr<Poco::Data::Session> session;
@@ -164,7 +165,7 @@ std::map<int, std::string> DatabaseManager::getInProgressTournaments()
     return {};
 }
 
-std::unordered_set<std::string> DatabaseManager::getMatchesApiID()
+std::unordered_set<std::string> DatabaseManager::getMatchesApiIDWithoutResult()
 {
     try
     {
@@ -172,6 +173,30 @@ std::unordered_set<std::string> DatabaseManager::getMatchesApiID()
 
         Poco::Data::Statement select(*session);
         select << "SELECT api_id FROM matches WHERE match_result_id IS NULL";
+        select.execute();
+        Poco::Data::RecordSet rs(select);
+
+        std::unordered_set<std::string> toReturn;
+        for (auto it = rs.begin(); it != rs.end(); ++it)
+            toReturn.insert((*it)[0].convert<std::string>());
+
+        return toReturn;
+    }
+    catch (const Poco::Exception &ex)
+    {
+        spdlog::error("Ошибка выборки данных: {}", ex.displayText());
+    }
+    return std::unordered_set<std::string>();
+}
+
+inline std::unordered_set<std::string> DatabaseManager::getMatchesApiIDWithResult()
+{
+    try
+    {
+        std::lock_guard<std::mutex> lock(sessionMutex);
+
+        Poco::Data::Statement select(*session);
+        select << "SELECT api_id FROM matches WHERE match_result_id IS NOT NULL";
         select.execute();
         Poco::Data::RecordSet rs(select);
 

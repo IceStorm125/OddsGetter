@@ -34,7 +34,7 @@ public:
     {
         try
         {
-            std::unordered_set<std::string> matchIds = db->getMatchesApiID();
+            std::unordered_set<std::string> matchIds = db->getMatchesApiIDWithoutResult();
 
             nlohmann::json matches = nlohmann::json::parse(jsonString);
 
@@ -86,11 +86,18 @@ public:
         {
             nlohmann::json matches = nlohmann::json::parse(jsonString);
 
+            std::unordered_set<std::string> matchIds = db->getMatchesApiIDWithResult();
+
+
             for (const auto &match : matches)
             {
                 if (!match.contains("completed") || !match["completed"].get<bool>())
                     continue;
 
+                std::string api_id = match["id"];
+                if(matchIds.find(api_id) != matchIds.end())
+                    continue;
+                
                 std::string homeTeam = match["home_team"];
                 std::string awayTeam = match["away_team"];
                 int homeScore = 0;
@@ -117,7 +124,7 @@ public:
                     result = "X";
 
 
-                db->addResult(match["id"], result);
+                db->addResult(api_id, result);
             }
         }
         catch (const std::exception &e)
