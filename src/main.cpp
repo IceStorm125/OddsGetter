@@ -75,6 +75,7 @@ int main() {
 
     while (true)
     {
+        spdlog::info("Getting match data");
         for (auto const & it : trnmts) {
             std::string json = extractor.getJson("https://api.the-odds-api.com/v4/sports/" + it.second + "/odds?regions=eu&markets=h2h&oddsFormat=decimal&apiKey=" + apiKey.value());
             parser.getMatchData(json);
