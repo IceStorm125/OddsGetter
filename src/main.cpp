@@ -55,16 +55,18 @@ int main() {
     auto trnmts = db->getInProgressTournaments();
 
     JSONdataExtractor extractor;
-    JSONparser parser;
 
-    auto t1 = std::thread([&extractor, &parser, &apiKey, &trnmts, &db]() {
+    auto t1 = std::thread([&extractor, &apiKey, &trnmts, &host, &user, &password, &dbName, &port]() {
         while (true) {       
             std::this_thread::sleep_for(std::chrono::minutes(5));
+            std::unique_ptr<DatabaseManager> db = std::make_unique<DatabaseManager>(host.value(), user.value(), password.value(), dbName.value(), port.value());
 
             if(auto diff = db->hasMatchesWithoutResult().value(); db->hasMatchesWithoutResult().has_value() && diff > 10)
                 continue;           
 
-            spdlog::info("Getting match data");
+            spdlog::info("Getting result data");
+
+            JSONparser parser;
             for (auto const & it : trnmts) {
                 std::string json = extractor.getJson("https://api.the-odds-api.com/v4/sports/" + it.second + "/scores/?daysFrom=3&apiKey=" + apiKey.value());
                 parser.getResultData(json);
@@ -76,6 +78,8 @@ int main() {
     while (true)
     {
         spdlog::info("Getting match data");
+
+        JSONparser parser;
         for (auto const & it : trnmts) {
             std::string json = extractor.getJson("https://api.the-odds-api.com/v4/sports/" + it.second + "/odds?regions=eu&markets=h2h&oddsFormat=decimal&apiKey=" + apiKey.value());
             parser.getMatchData(json);
