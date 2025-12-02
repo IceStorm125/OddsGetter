@@ -46,7 +46,6 @@ DatabaseManager::DatabaseManager(const std::string &host, const std::string &use
     try
     {
         session = std::make_unique<Poco::Data::Session>("MySQL", "host=" + host + ";user=" + user + ";password=" + password + ";db=" + dbName + ";port=" + port);
-        spdlog::info("Succes connection to DB");
     }
     catch (const Poco::Exception &ex)
     {
@@ -57,7 +56,6 @@ DatabaseManager::DatabaseManager(const std::string &host, const std::string &use
 DatabaseManager::~DatabaseManager()
 {
     Poco::Data::MySQL::Connector::unregisterConnector();
-    spdlog::info("Connection to DB closed");
 }
 
 void DatabaseManager::addMatch(std::string api_id, int tournament_id, std::string team1, std::string team2, double koef_w1, double koef_x, double koef_w2, std::string time)
